@@ -1,0 +1,252 @@
+version: "3.8"
+
+services:
+
+  # Reverse Proxy dengan Nginx
+  nginx-proxy:
+    image: nginx:latest
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - nginx-wp-lb
+      - nginx-yo-lb
+      - nginx-nc-lb
+    networks:
+      - global_network
+
+  # Load Balancer Wordpress dengan Nginx
+  nginx-wp-lb:
+    image: nginx:latest
+    container_name: nginx-wp-lb
+    restart: always
+    volumes:
+      - ./nginx-wp.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - wordpress1
+      - wordpress2
+      - wordpress3
+    networks:
+      - global_network
+
+  # Load Balancer Yourls dengan Nginx
+  nginx-yo-lb:
+    image: nginx:latest
+    container_name: nginx-yo-lb
+    restart: always
+    volumes:
+      - ./nginx-yo.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - yourls1
+      - yourls2
+      - yourls3
+    networks:
+      - global_network
+
+  # Load Balancer Nextcloud dengan Nginx
+  nginx-nc-lb:
+    image: nginx:latest
+    container_name: nginx-nc-lb
+    restart: always
+    volumes:
+      - ./nginx-nc.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - nextcloud1
+      - nextcloud2
+      - nextcloud3
+    networks:
+      - global_network
+
+  # WordPress Instances (3 container)
+  wordpress1:
+    image: wordpress:latest
+    container_name: wordpress1
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=secret
+      - WORDPRESS_DB_NAME=wordpress
+    networks:
+      - global_network
+
+  wordpress2:
+    image: wordpress:latest
+    container_name: wordpress2
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=secret
+      - WORDPRESS_DB_NAME=wordpress
+    networks:
+      - global_network
+
+  wordpress3:
+    image: wordpress:latest
+    container_name: wordpress3
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=secret
+      - WORDPRESS_DB_NAME=wordpress
+    networks:
+      - global_network
+
+  # YOURLS Instances (3 container)
+  yourls1:
+    image: yourls:latest
+    container_name: yourls1
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      - YOURLS_SITE=http://nginx-proxy/yourls
+      - YOURLS_USER=admin
+      - YOURLS_PASS=password
+      - YOURLS_DB_HOST=mariadb
+      - YOURLS_DB_USER=yourls
+      - YOURLS_DB_PASS=secret
+      - YOURLS_DB_NAME=yourls
+    networks:
+      - global_network
+
+  yourls2:
+    image: yourls:latest
+    container_name: yourls2
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      - YOURLS_SITE=http://nginx-proxy/yourls
+      - YOURLS_USER=admin
+      - YOURLS_PASS=password
+      - YOURLS_DB_HOST=mariadb
+      - YOURLS_DB_USER=yourls
+      - YOURLS_DB_PASS=secret
+      - YOURLS_DB_NAME=yourls
+    networks:
+      - global_network
+
+  yourls3:
+    image: yourls:latest
+    container_name: yourls3
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      - YOURLS_SITE=http://nginx-proxy/yourls
+      - YOURLS_USER=admin
+      - YOURLS_PASS=password
+      - YOURLS_DB_HOST=mariadb
+      - YOURLS_DB_USER=yourls
+      - YOURLS_DB_PASS=secret
+      - YOURLS_DB_NAME=yourls
+    networks:
+      - global_network
+
+  # Nextcloud Instances (3 container)
+  nextcloud1:
+    image: nextcloud
+    container_name: nextcloud1
+    restart: always
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - MYSQL_HOST=mariadb
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=secret
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=admin123
+      - REDIS_HOST=redis
+    volumes:
+      - /opt/nextcloud_data:/var/www/html
+    networks:
+      - global_network
+
+  nextcloud2:
+    image: nextcloud
+    container_name: nextcloud2
+    restart: always
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - MYSQL_HOST=mariadb
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=secret
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=admin123
+      - REDIS_HOST=redis
+    volumes:
+      - /opt/nextcloud_data:/var/www/html
+    networks:
+      - global_network
+
+  nextcloud3:
+    image: nextcloud
+    container_name: nextcloud3
+    restart: always
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - MYSQL_HOST=mariadb
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=secret
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=admin123
+      - REDIS_HOST=redis
+    volumes:
+      - /opt/nextcloud_data:/var/www/html
+    networks:
+      - global_network
+
+  # Database MariaDB untuk WordPress
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - global_network
+
+  # Redis untuk caching Nextcloud
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    networks:
+      - global_network
+
+# Definisi network
+networks:
+  global_network:
+    driver: bridge
+
+# Definisi volume untuk penyimpanan data
+volumes:
+  mariadb_data:
+  nextcloud_data:
+  redis_data:
