@@ -17,8 +17,8 @@ services:
       - mariadb
       - redis
     environment:
-      - OWNCLOUD_DOMAIN=localhost:8080
-      - OWNCLOUD_TRUSTED_DOMAINS=localhost
+      - OWNCLOUD_DOMAIN=ikaz.cloud
+      - OWNCLOUD_TRUSTED_DOMAINS=ikaz.cloud
       - OWNCLOUD_DB_TYPE=mysql
       - OWNCLOUD_DB_NAME=owncloud
       - OWNCLOUD_DB_USERNAME=owncloud
@@ -29,11 +29,6 @@ services:
       - OWNCLOUD_MYSQL_UTF8MB4=true
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
-    healthcheck:
-      test: ["CMD", "/usr/bin/healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
     volumes:
       - files:/mnt/data
     networks:
@@ -47,8 +42,8 @@ services:
       - mariadb
       - redis
     environment:
-      - OWNCLOUD_DOMAIN=localhost:8080
-      - OWNCLOUD_TRUSTED_DOMAINS=localhost
+      - OWNCLOUD_DOMAIN=ikaz.cloud
+      - OWNCLOUD_TRUSTED_DOMAINS=ikaz.cloud
       - OWNCLOUD_DB_TYPE=mysql
       - OWNCLOUD_DB_NAME=owncloud
       - OWNCLOUD_DB_USERNAME=owncloud
@@ -59,11 +54,6 @@ services:
       - OWNCLOUD_MYSQL_UTF8MB4=true
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
-    healthcheck:
-      test: ["CMD", "/usr/bin/healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
     volumes:
       - files:/mnt/data
     networks:
@@ -77,8 +67,8 @@ services:
       - mariadb
       - redis
     environment:
-      - OWNCLOUD_DOMAIN=localhost:8080
-      - OWNCLOUD_TRUSTED_DOMAINS=localhost
+      - OWNCLOUD_DOMAIN=ikaz.cloud
+      - OWNCLOUD_TRUSTED_DOMAINS=ikaz.cloud
       - OWNCLOUD_DB_TYPE=mysql
       - OWNCLOUD_DB_NAME=owncloud
       - OWNCLOUD_DB_USERNAME=owncloud
@@ -89,11 +79,6 @@ services:
       - OWNCLOUD_MYSQL_UTF8MB4=true
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
-    healthcheck:
-      test: ["CMD", "/usr/bin/healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
     volumes:
       - files:/mnt/data
     networks:
