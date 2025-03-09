@@ -1,0 +1,182 @@
+version: '3.8'
+
+volumes:
+  files:
+    driver: local
+  mysql:
+    driver: local
+  redis:
+    driver: local
+
+services:
+  owncloud1:
+    image: owncloud/server:latest
+    container_name: owncloud1
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on: 
+      - mariadb
+      redis
+    environment:
+      - OWNCLOUD_DOMAIN=localhost:8080
+      - OWNCLOUD_TRUSTED_DOMAINS=localhost
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=admin
+      - OWNCLOUD_ADMIN_PASSWORD=admin
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - files:/mnt/data
+    networks:
+      - owncloud_net
+
+  owncloud2:
+    image: owncloud/server:latest
+    container_name: owncloud2
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on: 
+      - mariadb
+      redis
+    environment:
+      - OWNCLOUD_DOMAIN=localhost:8080
+      - OWNCLOUD_TRUSTED_DOMAINS=localhost
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=admin
+      - OWNCLOUD_ADMIN_PASSWORD=admin
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - files:/mnt/data
+    networks:
+      - owncloud_net
+
+  owncloud3:
+    image: owncloud/server:latest
+    container_name: owncloud3
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on: 
+      - mariadb
+      redis
+    environment:
+      - OWNCLOUD_DOMAIN=localhost:8080
+      - OWNCLOUD_TRUSTED_DOMAINS=localhost
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=admin
+      - OWNCLOUD_ADMIN_PASSWORD=admin
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - files:/mnt/data
+    networks:
+      - owncloud_net
+
+  mariadb:
+    image: mariadb:10.11 # minimum required ownCloud version is 10.9
+    container_name: owncloud_mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD= owncloud
+      - MYSQL_USER= owncloud
+      - MYSQL_PASSWORD= owncloud
+      - MYSQL_DATABASE= owncloud
+      - MARIADB_AUTO_UPGRADE= 1
+    command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - owncloud_net
+
+  redis:
+    image: redis:6
+    container_name: owncloud_redis
+    restart: always
+    command: ["--databases", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis:/data
+    networks:
+      - owncloud_net
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      - PMA_HOST= mariadb
+      - MYSQL_ROOT_PASSWORD= owncloud
+    networks:
+      - owncloud_net
+
+  nginx-lb:
+    image: nginx:latest
+    container_name: load_balancer
+    restart: always
+    volumes:
+      - ./nginx/nginx-lb.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - owncloud_net
+
+  reverse-proxy:
+    image: nginx:latest
+    container_name: reverse_proxy
+    restart: always
+    volumes:
+      - ./nginx/nginx-proxy.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - nginx-lb
+    networks:
+      - owncloud_net
+
+networks:
+  owncloud_net:
+    driver: bridge
