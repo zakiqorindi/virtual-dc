@@ -116,24 +116,9 @@ services:
     restart: always
     volumes:
       - ./nginx-lb.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - owncloud1
-      - owncloud2
-      - owncloud3
-    networks:
-      - owncloud_net
-
-  reverse-proxy:
-    image: nginx:latest
-    container_name: reverse_proxy
-    restart: always
-    volumes:
-      - ./nginx-proxy.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "8081:80"
       - "8443:443"
-    depends_on:
-      - load-balancer
     networks:
       - owncloud_net
 
