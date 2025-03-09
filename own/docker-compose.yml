@@ -13,11 +13,9 @@ services:
     image: owncloud/server:latest
     container_name: owncloud1
     restart: always
-    ports:
-      - 8080:8080
     depends_on: 
       - mariadb
-      redis
+      - redis
     environment:
       - OWNCLOUD_DOMAIN=localhost:8080
       - OWNCLOUD_TRUSTED_DOMAINS=localhost
@@ -45,11 +43,9 @@ services:
     image: owncloud/server:latest
     container_name: owncloud2
     restart: always
-    ports:
-      - 8080:8080
     depends_on: 
       - mariadb
-      redis
+      - redis
     environment:
       - OWNCLOUD_DOMAIN=localhost:8080
       - OWNCLOUD_TRUSTED_DOMAINS=localhost
@@ -77,11 +73,9 @@ services:
     image: owncloud/server:latest
     container_name: owncloud3
     restart: always
-    ports:
-      - 8080:8080
     depends_on: 
       - mariadb
-      redis
+      - redis
     environment:
       - OWNCLOUD_DOMAIN=localhost:8080
       - OWNCLOUD_TRUSTED_DOMAINS=localhost
@@ -110,11 +104,11 @@ services:
     container_name: owncloud_mariadb
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD= owncloud
-      - MYSQL_USER= owncloud
-      - MYSQL_PASSWORD= owncloud
-      - MYSQL_DATABASE= owncloud
-      - MARIADB_AUTO_UPGRADE= 1
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
+      - MARIADB_AUTO_UPGRADE=1
     command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
