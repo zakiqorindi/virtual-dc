@@ -1,36 +1,16 @@
 version: '3.8'
 
-volumes:
-  files:
-    driver: local
-  mysql:
-    driver: local
-  redis:
-    driver: local
-
 services:
   owncloud1:
     image: owncloud/server:latest
     container_name: owncloud1
     restart: always
-    depends_on: 
-      - mariadb
-      - redis
     environment:
       - OWNCLOUD_DOMAIN=ikaz.cloud
       - OWNCLOUD_TRUSTED_DOMAINS=ikaz.cloud
       - OWNCLOUD_DB_TYPE=mysql
-      - OWNCLOUD_DB_NAME=owncloud
-      - OWNCLOUD_DB_USERNAME=owncloud
-      - OWNCLOUD_DB_PASSWORD=owncloud
-      - OWNCLOUD_DB_HOST=mariadb
       - OWNCLOUD_ADMIN_USERNAME=admin
       - OWNCLOUD_ADMIN_PASSWORD=admin
-      - OWNCLOUD_MYSQL_UTF8MB4=true
-      - OWNCLOUD_REDIS_ENABLED=true
-      - OWNCLOUD_REDIS_HOST=redis
-    volumes:
-      - files:/mnt/data
     networks:
       - owncloud_net
 
@@ -38,24 +18,12 @@ services:
     image: owncloud/server:latest
     container_name: owncloud2
     restart: always
-    depends_on: 
-      - mariadb
-      - redis
     environment:
       - OWNCLOUD_DOMAIN=ikaz.cloud
       - OWNCLOUD_TRUSTED_DOMAINS=ikaz.cloud
       - OWNCLOUD_DB_TYPE=mysql
-      - OWNCLOUD_DB_NAME=owncloud
-      - OWNCLOUD_DB_USERNAME=owncloud
-      - OWNCLOUD_DB_PASSWORD=owncloud
-      - OWNCLOUD_DB_HOST=mariadb
       - OWNCLOUD_ADMIN_USERNAME=admin
       - OWNCLOUD_ADMIN_PASSWORD=admin
-      - OWNCLOUD_MYSQL_UTF8MB4=true
-      - OWNCLOUD_REDIS_ENABLED=true
-      - OWNCLOUD_REDIS_HOST=redis
-    volumes:
-      - files:/mnt/data
     networks:
       - owncloud_net
 
@@ -63,24 +31,12 @@ services:
     image: owncloud/server:latest
     container_name: owncloud3
     restart: always
-    depends_on: 
-      - mariadb
-      - redis
     environment:
       - OWNCLOUD_DOMAIN=ikaz.cloud
       - OWNCLOUD_TRUSTED_DOMAINS=ikaz.cloud
       - OWNCLOUD_DB_TYPE=mysql
-      - OWNCLOUD_DB_NAME=owncloud
-      - OWNCLOUD_DB_USERNAME=owncloud
-      - OWNCLOUD_DB_PASSWORD=owncloud
-      - OWNCLOUD_DB_HOST=mariadb
       - OWNCLOUD_ADMIN_USERNAME=admin
       - OWNCLOUD_ADMIN_PASSWORD=admin
-      - OWNCLOUD_MYSQL_UTF8MB4=true
-      - OWNCLOUD_REDIS_ENABLED=true
-      - OWNCLOUD_REDIS_HOST=redis
-    volumes:
-      - files:/mnt/data
     networks:
       - owncloud_net
 
@@ -128,8 +84,9 @@ services:
     container_name: phpmyadmin
     restart: always
     environment:
-      - PMA_HOST= mariadb
-      - MYSQL_ROOT_PASSWORD= owncloud
+      - PMA_HOST=mariadb
+      - PMA_USER=root 
+      - PMA_PASSWORD=root
     networks:
       - owncloud_net
 
