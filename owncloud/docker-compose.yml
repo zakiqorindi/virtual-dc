@@ -71,9 +71,7 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - owncloud1
-      - owncloud2
-      - owncloud3
+      - owncloud
     networks:
       - owncloud_net
 
