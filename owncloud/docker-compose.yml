@@ -9,7 +9,59 @@ volumes:
     driver: local
 
 services:
-  owncloud:
+  owncloud1:
+    image: owncloud/server:latest
+    restart: always
+    expose:
+      - 8080
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - OWNCLOUD_DOMAIN=ikaz.trace
+      - OWNCLOUD_TRUSTED_DOMAINS="ikaz.trace, owncloud, 192.168.227.135"
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=admin
+      - OWNCLOUD_ADMIN_PASSWORD=admin
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    volumes:
+      - files:/mnt/data
+    networks:
+      - owncloud_net
+
+  owncloud2:
+    image: owncloud/server:latest
+    restart: always
+    expose:
+      - 8080
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - OWNCLOUD_DOMAIN=ikaz.trace
+      - OWNCLOUD_TRUSTED_DOMAINS="ikaz.trace, owncloud, 192.168.227.135"
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=admin
+      - OWNCLOUD_ADMIN_PASSWORD=admin
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    volumes:
+      - files:/mnt/data
+    networks:
+      - owncloud_net
+
+  owncloud3:
     image: owncloud/server:latest
     restart: always
     expose:
